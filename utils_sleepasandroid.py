@@ -13,8 +13,11 @@ def read_sleepasandroid_file(saa_filename):
         file_as_list = list(csv.reader(file, delimiter=','))
     return file_as_list
 
-SplitRecord = namedtuple('SasA_SplitRecord', ['start_time_ms', 'end_time_ms', 'light_sleep', 'deep_sleep',
-                                              'awake', 'hr', 'hr_zone'])
+SplitRecord = namedtuple('SasA_SplitRecord', ['start_time_ms', 'end_time_ms',
+                                              'light_sleep', 'deep_sleep',
+                                              'rem_sleep', 'awake', 'hr',
+                                              'hr_zone', 'noise_events',
+                                              'alarms'])
 
 
 def split_sleepasandroid_record(file_as_list, header_idx):
@@ -30,8 +33,18 @@ def split_sleepasandroid_record(file_as_list, header_idx):
     Returns:
         split_record (namedtuple 'SplitRecord')
     """
+    # check for manual entries
+    for idx, col in enumerate(file_as_list[header_idx][:]):
+        if 'comment' in col.lower():
+            if 'manually added' in file_as_list[header_idx+1][idx].lower():
+                warnings.warn('manual entry found, unable to parse '
+                              'sleep data')
+                return
     light_sleep = []
     deep_sleep = []
+    rem_sleep = []
+    noise = []
+    alarm = []
     hr_zone = []
     hr = []
     awake = []
@@ -63,16 +76,40 @@ def split_sleepasandroid_record(file_as_list, header_idx):
                 hr.append(event)
             elif 'HR' in event_name:
                 hr.append(event)
-            elif 'USER' in event_name:
+            elif 'REM' in event_name:
+                rem_sleep.append(event)
+            elif 'TALK' in event_name or 'SNORING' in event_name:
+                noise.append(event)
+            elif 'ALARM' in event_name:
+                alarm.append(event)
+            elif 'USER' in event_name or 'BROKEN' in event_name:
                 pass
             else:
                 warnings.warn("unrecognized event: {0}".format(event))
 
+    if not light_sleep:
+        light_sleep = None
+    if not deep_sleep:
+        deep_sleep = None
+    if not rem_sleep:
+        rem_sleep = None
+    if not awake:
+        awake = None
+    if not hr_zone:
+        hr_zone = None
+    if not hr:
+        hr = None
+    if not noise:
+        noise = None
+    if not alarm:
+        alarm = None
+
     split_record = SplitRecord(start_time_ms=start_time_ms,
-                               light_sleep=np.array(light_sleep),
-                               deep_sleep=np.array(deep_sleep),
-                               awake=np.array(awake), hr=np.array(hr),
-                               hr_zone=np.array(hr_zone), end_time_ms=end_time_ms)
+                               light_sleep=light_sleep,
+                               deep_sleep=deep_sleep, rem_sleep=rem_sleep,
+                               alarms=alarm, noise_events=noise,
+                               awake=awake, hr=hr, hr_zone=hr_zone,
+                               end_time_ms=end_time_ms)
     return split_record
 
 
