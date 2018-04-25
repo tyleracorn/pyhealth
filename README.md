@@ -7,7 +7,11 @@ This is a python package for parsing and viewing health/wellness/fitness data fr
     * Currently you can parse the backup file that sleep as android saves to cloud for you. Right now there are a couple of steps you need to do for each record, which I show in the example jupyter notebook. This allows you to plot individual sleep records... or (what is more interesting to me) calculate and plot your resting heart rate. Right now I am looking at both the minimum heart rate and the 5th percentile heart rate value for each sleep record. The 5th percentile is less noisy then the minimum value so I'm leaning towards that.
 
 Example sleep record plot
-![alt text](/example/example_sleep_record.png?raw=true "Example Sleep Record")
+![sleep record image](/examples/example_sleep_record.png?raw=true "Example Sleep Record")
+
+Example resting heart rate plot
+![sleep record image](/examples/example_resting_heartrate.png?raw=true "Example Resting Heart Rates")
+
 ---
 ### Planned sources
 * parse and view .gpx, .tix, and .fit data, some sample data is included (downloaded from the garmin website) for development and example purposes. The viewing the data will incorporate either openMaps or google maps
