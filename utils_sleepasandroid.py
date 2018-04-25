@@ -17,7 +17,7 @@ SplitRecord = namedtuple('SasA_SplitRecord', ['start_datetime', 'end_datetime',
                                               'light_sleep', 'deep_sleep',
                                               'rem_sleep', 'awake', 'heart_rate',
                                               'hr_zone', 'noise_events',
-                                              'alarms'])
+                                              'alarms', 'timezone'])
 
 
 def split_sleepasandroid_record(file_as_list, header_idx):
@@ -148,25 +148,14 @@ def split_sleepasandroid_record(file_as_list, header_idx):
                                light_sleep=light_sleep,
                                deep_sleep=deep_sleep, rem_sleep=rem_sleep,
                                alarms=alarm, noise_events=noise,
-                               awake=awake, heart_rate=hr, hr_zone=hr_zone)
+                               awake=awake, heart_rate=hr, hr_zone=hr_zone,
+                               timezone=timezone)
     return split_record
 
-
-lightSleepRecord = namedtuple('LightSleep_Record', ['cycle_start_ms',
-                                                    'cycle_end_ms',
-                                                    'cycle_duration_ms',
-                                                    'ncycles'])
-deepSleepRecord = namedtuple('DeepSleep_Record', ['cycle_start_ms',
-                                                  'cycle_end_ms',
-                                                  'cycle_duration_ms',
-                                                  'ncycles'])
-awakeRecord = namedtuple('Awake_Record', ['cycle_start_ms',
-                                          'cycle_end_ms',
-                                          'cycle_duration_ms',
-                                          'ncycles'])
-sleepRecord = namedtuple('Sleep_Record', ['ncycles', 'start_ms',
-                                          'end_ms', 'duration_ms',
-                                          'stage', 'stage_code'])
+sleepRecord = namedtuple('Sleep_Record', ['ncycles', 'cycle_start',
+                                          'cycle_end', 'duration_mins',
+                                          'stage', 'stage_code',
+                                          'timezone'])
 
 
 def parse_sleep_records(split_record, ls_int_code=2, ds_int_code=1,
@@ -189,34 +178,41 @@ def parse_sleep_records(split_record, ls_int_code=2, ds_int_code=1,
     awake_record = _parse_event(split_record, 'awake')
 
     # Parse Sleep Cycle Record
-    dtype = dtype = [('event', np.object_), ('cycle_start', int), ('cycle_end', int),
-                     ('cycle_duration', int), ('event_id', int)]
-    values = []
+    dtype = [('event', np.object_), ('cycle_start', 'datetime64[s]'), ('cycle_end', 'datetime64[s]'),
+         ('duration_mins', int), ('event_id', int)]
+    total_cycles = ls_record.ncycles + ds_record.ncycles + awake_record.ncycles
+    combined_values = np.empty((total_cycles), dtype=dtype)
+    val_idx = 0
     for idx in range(ls_record.ncycles):
-        values.append(('LightSleep', ls_record.cycle_start_time[idx],
-                       ls_record.cycle_end_time[idx],
-                       ls_record.cycle_duration[idx],
-                       ls_int_code))
+        combined_values[val_idx][0] = 'LightSleep'
+        combined_values[val_idx][1] = ls_record.cycle_start_time[idx].to_datetime_string()
+        combined_values[val_idx][2] = ls_record.cycle_end_time[idx].to_datetime_string()
+        combined_values[val_idx][3] = ls_record.cycle_duration[idx].in_minutes()
+        combined_values[val_idx][4] = ls_int_code
+        val_idx += 1
     for idx in range(ds_record.ncycles):
-        values.append(('DeepSleep', ds_record.cycle_start_time[idx],
-                       ds_record.cycle_end_time[idx],
-                       ds_record.cycle_duration[idx],
-                       ds_int_code))
+        combined_values[val_idx][0] = 'DeepSleep'
+        combined_values[val_idx][1] = ds_record.cycle_start_time[idx].to_datetime_string()
+        combined_values[val_idx][2] = ds_record.cycle_end_time[idx].to_datetime_string()
+        combined_values[val_idx][3] = ds_record.cycle_duration[idx].in_minutes()
+        combined_values[val_idx][4] = ds_int_code
+        val_idx += 1
     for idx in range(awake_record.ncycles):
-        values.append(('Awake', awake_record.cycle_start_time[idx],
-                       awake_record.cycle_end_time[idx],
-                       awake_record.cycle_duration[idx],
-                       awake_int_code))
-
-    combined_fields = np.array(values, dtype=dtype)       # create a structured array
-    sorted_records = np.sort(combined_fields, order='cycle_start')
+        combined_values[val_idx][0] = 'Awake'
+        combined_values[val_idx][1] = awake_record.cycle_start_time[idx].to_datetime_string()
+        combined_values[val_idx][2] = awake_record.cycle_end_time[idx].to_datetime_string()
+        combined_values[val_idx][3] = awake_record.cycle_duration[idx].in_minutes()
+        combined_values[val_idx][4] = awake_int_code
+        val_idx += 1
+    sorted_records = np.sort(combined_values, order='cycle_start')
 
     sleep_record = sleepRecord(ncycles=len(sorted_records),
-                               start_ms=sorted_records['cycle_start'],
-                               end_ms=sorted_records['cycle_end'],
-                               duration_ms=sorted_records['cycle_duration'],
+                               cycle_start=sorted_records['cycle_start'],
+                               cycle_end=sorted_records['cycle_end'],
+                               duration_mins=sorted_records['duration_mins'],
                                stage=sorted_records['event'],
-                               stage_code=sorted_records['event_id'])
+                               stage_code=sorted_records['event_id'],
+                               timezone=split_record.timezone)
 
     return sleep_record, ls_record, ds_record, awake_record
 
@@ -226,6 +222,7 @@ sleepStageRecord = namedtuple('sleepStageRecord', ['sleep_stage',
                                                    'cycle_end_time',
                                                    'cycle_duration',
                                                    'ncycles'])
+
 
 def _parse_event(split_record_namedtuple, event):
     """
