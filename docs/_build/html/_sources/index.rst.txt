@@ -7,10 +7,10 @@ Welcome to pyhealth's documentation!
 ====================================
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+    :maxdepth: 2
+    :caption: Contents:
 
-   welcome.rst
-   installation.rst
-   dependencies.rst
-
+    welcome.rst
+    installation.rst
+    dependencies.rst
+    garmin.rst

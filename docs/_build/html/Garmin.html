@@ -1,0 +1,363 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>GarminConnect &#8212; pyhealth 0.1_dev documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Dependencies" href="dependencies.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="garminconnect">
+<span id="garmin"></span><h1>GarminConnect<a class="headerlink" href="#garminconnect" title="Permalink to this headline">¶</a></h1>
+<p>The core class for pushing and pulling to your account with GarminConnect</p>
+<div class="section" id="clientgarmin">
+<span id="id1"></span><h2>ClientGarmin<a class="headerlink" href="#clientgarmin" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="pyhealth.Garmin.ClientGarmin">
+<em class="property">class </em><code class="descclassname">pyhealth.Garmin.</code><code class="descname">ClientGarmin</code><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>A client class used to authenticate with Garmin Connect and
+extract data from the user account.</p>
+<p>Since this class implements the context manager protocol, this object
+can preferably be used together with the with-statement. This will
+automatically take care of logging in to Garmin Connect before any
+further interactions and logging out after the block completes or
+a failure occurs.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>username (str): username for your Garmin connect account
+password (str): password for your Garmin connect account</dd>
+</dl>
+<p>Examples:</p>
+<p>Using a <cite>with</cite> block to grab activity data</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">GarminClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="n">ids</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_activity_ids</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">for</span> <span class="n">activity_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">gpx</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">get_activity_gpx</span><span class="p">(</span><span class="n">activity_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>a pop up window will open asking you to enter your loginname, password, and username
+the username can be different from your loginname if you’ve ever changed your loginname
+(Like I did a number of years ago). If you are unsure, login into garmin connect online
+and go to your wellness daily report url to see if it has a username different from
+your login name.  address should be:
+‘<a class="reference external" href="https://connect.garmin.com/modern/proxy/userstats-service/wellness/daily">https://connect.garmin.com/modern/proxy/userstats-service/wellness/daily</a>/{username}’</p>
+</dd></dl>
+
+<div class="section" id="connect">
+<span id="clientgarmin-connections"></span><h3>Connect<a class="headerlink" href="#connect" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.connect">
+<code class="descclassname">ClientGarmin.</code><code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>connect using the requests.Session() authentication</p>
+</dd></dl>
+
+</div>
+<div class="section" id="disconnect">
+<h3>Disconnect<a class="headerlink" href="#disconnect" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.disconnect">
+<code class="descclassname">ClientGarmin.</code><code class="descname">disconnect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>disconnect from the session</p>
+</dd></dl>
+
+</div>
+<div class="section" id="manage-connections">
+<h3>Manage Connections<a class="headerlink" href="#manage-connections" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.manage_connection">
+<code class="descclassname">ClientGarmin.</code><code class="descname">manage_connection</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.manage_connection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable GarminClient to be used in a with statement</p>
+</dd></dl>
+
+</div>
+<div class="section" id="list-activities">
+<span id="clientgarmin-summaries"></span><h3>List Activities<a class="headerlink" href="#list-activities" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.list_activities">
+<code class="descclassname">ClientGarmin.</code><code class="descname">list_activities</code><span class="sig-paren">(</span><em>batch_size=100</em>, <em>force_reload=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.list_activities" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all activity ids stored by the logged in user, along
+with their starting timestamps.</p>
+<p>Returns:
+ids (tuple of (int, datetime)): The full list of activity identifiers</p>
+<blockquote>
+<div>(along with their starting timestamps).</div></blockquote>
+<p>taken from <a class="reference external" href="https://github.com/90oak">petergardfjall</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="get-wellness-summary-for-date-span">
+<h3>Get Wellness Summary for Date-span<a class="headerlink" href="#get-wellness-summary-for-date-span" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_wellness_summary_datespan">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_wellness_summary_datespan</code><span class="sig-paren">(</span><em>from_date='2018-07-01'</em>, <em>until_date='2018-09-01'</em>, <em>force_reload=False</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_wellness_summary_datespan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return summary of wellness data stored by the logged in user</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>from_date (str): yyyy-mm-dd
+until_date (str): yyyy-mm-dd</dd>
+</dl>
+<p>Returns:
+json dictionary load of response</p>
+</dd></dl>
+
+</div>
+<div class="section" id="get-activity-summary">
+<h3>Get Activity Summary<a class="headerlink" href="#get-activity-summary" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_activity_summary">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_activity_summary</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_activity_summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a summary about a given activity. The
+summary contains several statistics, such as duration, GPS starting
+point, GPS end point, elevation gain, max heart rate, max pace, max
+speed, etc.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd>dict: the activity summary as a JSON dict.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-activity-details">
+<span id="clientgarmin-get-activities"></span><h3>Get Activity Details<a class="headerlink" href="#get-activity-details" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_activity_details">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_activity_details</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_activity_details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a JSON representation of a given activity including
+available measurements such as location (longitude, latitude),
+heart rate, distance, pace, speed, elevation.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd>dict: The activity details as a JSON dict.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-activity-gpx">
+<h3>Get Activity GPX<a class="headerlink" href="#get-activity-gpx" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_activity_gpx">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_activity_gpx</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_activity_gpx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a GPX (GPS Exchange Format) representation of a
+given activity. If the activity cannot be exported to GPX
+(not yet observed in practice, but that doesn’t exclude the
+possibility), a <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> value is returned.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>str: The GPX representation of the activity as an XML string</dt>
+<dd>or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the activity couldn’t be exported to GPX.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-activity-tcx">
+<h3>Get Activity TCX<a class="headerlink" href="#get-activity-tcx" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_activity_tcx">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_activity_tcx</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_activity_tcx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a TCX (Training Center XML) representation of a
+given activity. If the activity doesn’t have a TCX source (for
+example, if it was originally uploaded in GPX format, Garmin
+won’t try to synthesize a TCX file) a <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> value is
+returned.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd>str: The TCX representation of the activity as an XML string
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> if the activity cannot be exported to TCX.</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-original-activity">
+<h3>Get Original Activity<a class="headerlink" href="#get-original-activity" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_original_activity">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_original_activity</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_original_activity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the original file that was uploaded for an activity.
+If the activity doesn’t have any file source (for example,
+if it was entered manually rather than imported from a Garmin
+device) then <code class="xref py py-obj docutils literal notranslate"><span class="pre">(None,None)</span></code> is returned.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(fltype, content): A tuple of the file type (e.g. ‘fit’, ‘tcx’, ‘gpx’) and</dt>
+<dd>its contents, or <cite>(None,None)</cite> if no file is found.</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="get-activity-fit">
+<h3>Get Activity FIT<a class="headerlink" href="#get-activity-fit" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.get_activity_fit">
+<code class="descclassname">ClientGarmin.</code><code class="descname">get_activity_fit</code><span class="sig-paren">(</span><em>activity_id</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.get_activity_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a FIT representation for a given activity. If the activity
+doesn’t have a FIT source (for example, if it was entered manually
+rather than imported from a Garmin device) a <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code> value is
+returned.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>activity_id (int): activity identifier</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>(str): A string with a FIT file for the activity or <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></dt>
+<dd>if no FIT source exists for this activity (e.g., entered manually).</dd>
+</dl>
+</dd>
+</dl>
+<p>taken from <a class="reference external" href="https://github.com/90oak">petergardfjall</a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="get-resting-heart-rate-trend">
+<h3>Get Resting Heart Rate Trend<a class="headerlink" href="#get-resting-heart-rate-trend" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.Get_RestingHR_Trend">
+<code class="descclassname">ClientGarmin.</code><code class="descname">Get_RestingHR_Trend</code><span class="sig-paren">(</span><em>from_date</em>, <em>until_date</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.Get_RestingHR_Trend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return list of the resting heart rate for a range of dates</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd>from_date (str): yyyy-mm-dd
+until_date (str): yyyy-mm-dd</dd>
+<dt>Returns:</dt>
+<dd>rHR (list), Dates (list), n_records (int)</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="upload-activity">
+<span id="clientgarmin-upload-activities"></span><h3>Upload Activity<a class="headerlink" href="#upload-activity" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="pyhealth.Garmin.ClientGarmin.upload_activity">
+<code class="descclassname">ClientGarmin.</code><code class="descname">upload_activity</code><span class="sig-paren">(</span><em>file</em>, <em>format=None</em>, <em>name=None</em>, <em>description=None</em>, <em>activity_type=None</em>, <em>private=None</em><span class="sig-paren">)</span><a class="headerlink" href="#pyhealth.Garmin.ClientGarmin.upload_activity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Upload a GPX, TCX, or FIT file for an activity.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><p class="first">file (str, path, or open file): Path or open file for activity to upload
+format (str): file format uploading (‘gpx’, ‘tcx’, ‘fit’). Will attempt to guess</p>
+<blockquote>
+<div>if None is provided</div></blockquote>
+<p class="last">name (str): Optional name for the activity
+description (str): Optional description of the activity
+activity_type (str): Optional activity type ket (lowercase: e.g. running, cycling)
+private (bool): if True, then activity will be set as private</p>
+</dd>
+<dt>Returns:</dt>
+<dd>(int): activity_id of the newly-uploaded activity</dd>
+</dl>
+<p>taken from <a class="reference external" href="https://github.com/90oak">petergardfjall</a></p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">pyhealth</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="welcome.html">Welcome</a></li>
+<li class="toctree-l1"><a class="reference internal" href="welcome.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dependencies.html">Dependencies</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GarminConnect</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#clientgarmin">ClientGarmin</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="dependencies.html" title="previous chapter">Dependencies</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, tyler acorn.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.9</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.11</a>
+      
+      |
+      <a href="_sources/garmin.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
